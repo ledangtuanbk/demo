@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/test")
@@ -35,14 +39,14 @@ public class TestController {
 //    }
 
     @Transactional(rollbackFor = NullPointerException.class)
-    @GetMapping(path = "/get2")
-    public void test2() throws InterruptedException {
+    @GetMapping(path = "/get3")
+    public void test3() throws InterruptedException {
 
-        System.out.println("TestController.test2 " + testRepository.findAll().size());
-        NotrequireNew();
-        requireNew();
-        System.out.println("TestController.test2 " + testRepository.findAll().size());
-        throw new NullPointerException("test");
+//        System.out.println("TestController.test2 " + testRepository.findAll().size());
+//        NotrequireNew();
+//        requireNew();
+//        System.out.println("TestController.test2 " + testRepository.findAll().size());
+//        throw new NullPointerException("test");
 
 //        testRepository.lock();
 //        TestEntity testEntity1 = testRepository.findAll().get(0);
@@ -75,29 +79,55 @@ public class TestController {
 //        System.out.println("TestController.get2 end" );
     }
 
+    @Autowired
+    TestService testService;
+
+
+    @Autowired
+    MyPKRepository myPKRepository;
+
+    @Transactional
+    @GetMapping(path = "/get2")
+    public void test2(){
+        TestPKEntity testPKEntity = new TestPKEntity();
+        testPKEntity.setMyPK(new MyPK(1L,1));
+        testPKEntity.setName(UUID.randomUUID().toString());
+        myPKRepository.save(testPKEntity);
+    }
+
+
     @Transactional
     @GetMapping(path = "/get")
     public void test() throws InterruptedException {
-        System.out.println("TestController.test2 " + testRepository.findAll().size());
-        // se luu ban ghi nay 99
-        NotrequireNew();
-
-        // ban ghi voi number = 100 se dc luu vi no co require new
-        requireNew();
-        System.out.println("TestController.test2 " + testRepository.findAll().size());
-        throw new NullPointerException("test");
+//        System.out.println("hello");
+        Long id = 92L;
+////        testRepository.deleteById(id);
+////        TestEntity testEntity1 = new TestEntity();
+//////        testEntity1.setId(id);
+////        testRepository.save(testEntity1);
+//        Optional<TestEntity> byId = testRepository.findById(id);
+//        if(byId.isPresent()){
+//            TestEntity testEntity = byId.get();
+//            System.out.println("TestController.test " + testEntity.getId() );
+//            testRepository.delete(testEntity);
+////            testRepository.deleteById(id);
+//
+//            TestEntity testEntity1 = new TestEntity();
+//            testEntity1.setId(id);
+//            testRepository.save(testEntity1);
+//
+//        }
+//        System.out.println("TestController.test done");
+        testRepository.findById(id).ifPresent(testEntity -> System.out.println("testEntity.getId() = " + testEntity.getId()));
+        testRepository.deleteById(id);
+        TestEntity testEntity1 = new TestEntity();
+        testEntity1.setId(id);
+        testRepository.save(testEntity1);
     }
 
-    public void NotrequireNew() {
+    public void notRequireNew() {
         TestEntity testEntity = new TestEntity();
         testEntity.setNumber(99);
-        testRepository.saveAndFlush(testEntity);
-    }
-
-    @Transactional(propagation= Propagation.REQUIRES_NEW)
-    public void requireNew() {
-        TestEntity testEntity = new TestEntity();
-        testEntity.setNumber(100);
         testRepository.saveAndFlush(testEntity);
     }
 }
