@@ -1,16 +1,14 @@
 package com.example.demo;
 
-import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 
 @RestController
@@ -86,13 +84,40 @@ public class TestController {
     @Autowired
     MyPKRepository myPKRepository;
 
+    Long testId = 10L;
+
     @Transactional
     @GetMapping(path = "/get2")
-    public void test2(){
+    public void test2() throws InterruptedException {
+        Long id = 100L;
+        Optional<TestEntity> byId = testRepository.findById(id);
+        if(byId.isPresent()){
+            TestEntity testEntity = byId.get();
+            System.out.println(testEntity.getNumber());
+//            testRepository.deleteByIdNative(id);
+            testRepository.deleteById(id);
+
+            TestEntity testEntity1 = new TestEntity();
+            testEntity1.setId(id);
+            testEntity1.setNumber(10);
+            testRepository.save(testEntity1);
+
+        }
+        System.out.println("TestController.test done");
+    }
+
+    @Transactional
+    @GetMapping(path = "/get4")
+    public TestPKEntity test4(){
+
+        Integer lineNumber = 2;
+        List<TestPKEntity> byMyPK_lineNumber = myPKRepository.findByMyPK_LineNumber(lineNumber);
+        System.out.println("byMyPK_lineNumber.size() = " + byMyPK_lineNumber.size());
+        myPKRepository.deleteByMyPK_TransactionId(3L);
         TestPKEntity testPKEntity = new TestPKEntity();
-        testPKEntity.setMyPK(new MyPK(1L,1));
-        testPKEntity.setName(UUID.randomUUID().toString());
+        testPKEntity.setMyPK(new MyPK(3L,2));
         myPKRepository.save(testPKEntity);
+        return testPKEntity;
     }
 
 
