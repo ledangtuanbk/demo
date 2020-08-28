@@ -21,15 +21,27 @@ public interface TestRepository extends JpaRepository<TestEntity, Long> {
 
     @Query(value = "call getNumber();", nativeQuery = true)
     Integer getNumber();
-    
-//    @Modifying(clearAutomatically = true)
+
+    //    @Modifying(clearAutomatically = true)
 //    @Modifying
 //    @Query(value = "delete from TestEntity t where t.id = :id")
-//    void deleteById(@Param("id") Long id);
-
-    @Modifying
-    @Query(value = "delete from tbl_test where id = :id", nativeQuery = true)
+    @Modifying(clearAutomatically = true)
+    @Query(value = "delete from TestEntity where transactionId = :id")
     void deleteByIdNative(@Param("id") Long id);
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update TestEntity set number = 111 where transactionId = :id")
+    void updateNative(@Param("id") Long id);
+
+//    void deleteById(@Param("id") Long id);
+
 //    void deleteB yId(Long id);
+
+    TestEntity findByTransactionId(final Long id);
+
+    @Query(nativeQuery = true, value = "select * from tbl_test where id = 10")
+    Integer getNumber1();
+
+    @Modifying
+    void deleteByTransactionId(Long transactionId);
 }

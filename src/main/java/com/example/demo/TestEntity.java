@@ -9,17 +9,17 @@ public class TestEntity {
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private long transactionId;
 
     @Column(name = "number")
     private int number;
 
-    public long getId() {
-        return id;
+    public long getTransactionId() {
+        return transactionId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setTransactionId(long id) {
+        this.transactionId = id;
     }
 
     public int getNumber() {

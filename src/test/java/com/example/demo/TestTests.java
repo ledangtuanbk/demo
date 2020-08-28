@@ -1,7 +1,5 @@
 package com.example.demo;
 
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Random;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,10 +32,10 @@ class TestTests {
 
 
 
-//    @BeforeEach
+    @BeforeEach
     public void setup() throws Exception {
         TestEntity testEntity = new TestEntity();
-        testEntity.setId(testId);
+        testEntity.setTransactionId(testId);
         testEntity.setNumber(UUID.randomUUID().version());
         testRepository.save(testEntity);
     }
@@ -48,8 +45,26 @@ class TestTests {
     @Test
     void contextLoads() throws Exception {
         System.out.println("DemoApplicationTests.contextLoads");
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/test/get2"))
-                .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(MockMvcRequestBuilders.get("/test/get2"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+//        new Thread(() -> {
+//            try {
+//                mockMvc.perform(MockMvcRequestBuilders.get("/test/get2"))
+//                        .andExpect(MockMvcResultMatchers.status().isOk());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//        Thread.sleep(100);
+//        new Thread(()->{
+//            try {
+//                mockMvc.perform(MockMvcRequestBuilders.get("/test/get3"))
+//                        .andExpect(MockMvcResultMatchers.status().isOk());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+
+
     }
 }
